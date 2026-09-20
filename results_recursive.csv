@@ -1,6 +1,6 @@
 query_id,query,chunker,num_chunks_total,top_1_doc_id,top_1_score,top_1_in_gold,top_3_relevant,answer_marker_found
-1,Nếu thanh toán bằng thẻ tín dụng/ghi nợ thì tôi sẽ nhận tiền hoàn trong bao lâu?,recursive,121,shopee-quy-dinh-chung-tra-hang-hoan-tien,0.243,False,0,False
-2,Tôi đã mở hộp niêm phong để kiểm tra sản phẩm thì có được trả hàng với lý do đổi ý không?,recursive,121,shopee-tra-hang-doi-y,0.29,True,1,False
-3,"Nếu chọn hình thức Tự sắp xếp, tôi phải gửi trả hàng theo các bước nào?",recursive,121,shopee-tra-hang-doi-y,0.268,False,0,False
-4,Hãy liệt kê các nhóm sản phẩm hạn chế trả hàng và cho một vài ví dụ trong mỗi nhóm.,recursive,121,shopee-tra-hang-doi-y,0.266,False,0,False
-5,"Khi đơn hàng hoàn trả bị hư hỏng, thiếu hàng hoặc không đúng hàng, cần chuẩn bị bằng chứng gì?",recursive,121,shopee-seller-phan-hoi-tra-hang-hoan-tien,0.263,True,3,False
+1,Nếu thanh toán bằng thẻ tín dụng/ghi nợ thì tôi sẽ nhận tiền hoàn trong bao lâu?,recursive,121,shopee-thoi-gian-va-kiem-tra-tien-hoan,0.863,True,2,True
+2,Tôi đã mở hộp niêm phong để kiểm tra sản phẩm thì có được trả hàng với lý do đổi ý không?,recursive,121,shopee-san-pham-han-che-tra-hang,0.925,False,1,True
+3,"Nếu chọn hình thức Tự sắp xếp, tôi phải gửi trả hàng theo các bước nào?",recursive,121,shopee-dong-goi-hang-hoan-tra,0.84,False,0,False
+4,Hãy liệt kê các nhóm sản phẩm hạn chế trả hàng và cho một vài ví dụ trong mỗi nhóm.,recursive,121,shopee-phuong-thuc-va-phi-hoan-tra,0.898,False,0,False
+5,"Khi đơn hàng hoàn trả bị hư hỏng, thiếu hàng hoặc không đúng hàng, cần chuẩn bị bằng chứng gì?",recursive,121,shopee-seller-phan-hoi-tra-hang-hoan-tien,0.821,True,3,False

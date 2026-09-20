@@ -27,7 +27,7 @@ EMBEDDING_FN = SmartMockEmbedder()  # Keyword-based, better than hash
 # CHIẾN LƯỢC CỦA THÀNH VIÊN NÀY
 # Mỗi người CHỈ ĐỔI DÒNG NÀY, mọi thứ khác giữ nguyên để so sánh công bằng
 # ============================================================================
-CHUNKER_STRATEGY = "recursive"  # Các giá trị: "fixed" / "sentence" / "recursive" / "hierarchical" / "mixed"
+CHUNKER_STRATEGY = "hierarchical"  # Các giá trị: "fixed" / "sentence" / "recursive" / "hierarchical" / "mixed"
 
 # Cấu hình
 DATA_DIR = "data/shopee"

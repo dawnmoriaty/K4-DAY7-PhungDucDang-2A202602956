@@ -26,7 +26,7 @@ except ImportError:
     MixedHierarchicalRecursiveChunker = None
 from src.store import EmbeddingStore
 from src.agent import KnowledgeBaseAgent
-from src.embeddings import _mock_embed
+from src.embeddings import SmartMockEmbedder, _mock_embed
 from src.models import Document
 
 
@@ -128,7 +128,7 @@ def run_benchmark(chunker_name: str, queries_csv: str, data_dir: str):
     print(f"   ✅ {len(documents)} chunks tạo từ {total_chunks} sections\n")
 
     # 2. Nạp vào store
-    store = EmbeddingStore(embedding_fn=_mock_embed)
+    store = EmbeddingStore(embedding_fn=SmartMockEmbedder())
     store.add_documents(documents)
     print(f"   ✅ Store size: {store.get_collection_size()}\n")
 

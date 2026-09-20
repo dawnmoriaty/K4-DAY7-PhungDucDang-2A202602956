@@ -2,7 +2,7 @@
 
 **Họ tên:** Phùng Đức Đăng
 **Nhóm:** Nhóm 3
-**Ngày:** [Ngày nộp]
+**Ngày:** 20/09/2026
 
 > **Nộp 1 bản / sinh viên.** Phần nhóm (lựa chọn tài liệu, thiết kế chiến lược, bộ câu hỏi đánh giá, demo) nộp chung 1 bản trong `REPORT_NHOM.md`. Chi tiết thang điểm: `docs/SCORING.md`.
 
@@ -140,15 +140,15 @@ Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân củ
 
 | # | Câu hỏi (Query) | Top-1 Chunk truy xuất được | Score | Liên quan? | Câu trả lời tóm tắt |
 |-------|--------------------------------|-------|-----------|------------------------|
-| 1 | "Nếu thanh toán bằng thẻ tín dụng/ghi nợ thì tôi sẽ nhận tiền hoàn trong bao lâu?" | shopee-thoi-gian-va-kiem-tra-tien-hoan | 0.814 | ✅ | **PERFECT 2/2!** Đúng doc + có marker "7-14 ngày làm việc" |
-| 2 | "Tôi đã mở hộp niêm phong để kiểm tra sản phẩm thì có được trả hàng với lý do đổi ý không?" | shopee-san-pham-han-che-tra-hang | 0.925 | ⚠️ | Top-1 sai nhưng marker "không thể hỗ trợ" tìm thấy ở rank 2 |
-| 3 | "Nếu chọn hình thức Tự sắp xếp, tôi phải gửi trả hàng theo các bước nào?" | shopee-dong-goi-hang-hoan-tra | 0.840 | ❌ | Document sai - nên là shopee-phuong-thuc-va-phi-hoan-tra |
-| 4 | "Hãy liệt kê các nhóm sản phẩm hạn chế trả hàng và cho một vài ví dụ trong mỗi nhóm." | shopee-phuong-thuc-va-phi-hoan-tra | 0.898 | ❌ | Document sai - nên là shopee-san-pham-han-che-tra-hang |
-| 5 | "Khi đơn hàng hoàn trả bị hư hỏng, thiếu hàng hoặc không đúng hàng, cần chuẩn bị bằng chứng gì?" | shopee-seller-phan-hoi-tra-hang-hoan-tien | 0.821 | ✅ | Đúng document (filter audience=seller worked!) |
+| 1 | "Nếu thanh toán bằng thẻ tín dụng/ghi nợ thì tôi sẽ nhận tiền hoàn trong bao lâu?" | shopee-thoi-gian-va-kiem-tra-tien-hoan | 0.913 | ✅ | **PERFECT 2/2!** Đúng doc + có marker "7 - 14 ngày làm việc" |
+| 2 | "Tôi đã mở hộp niêm phong để kiểm tra sản phẩm thì có được trả hàng với lý do đổi ý không?" | shopee-tra-hang-doi-y | 0.933 | ✅ | **PERFECT 2/2!** Đúng doc + có marker "không thể hỗ trợ trả hàng với lý do Đổi ý" |
+| 3 | "Nếu chọn hình thức Tự sắp xếp, tôi phải gửi trả hàng theo các bước nào?" | shopee-dong-goi-hang-hoan-tra | 0.815 | ❌ | Document sai - nên là shopee-phuong-thuc-va-phi-hoan-tra |
+| 4 | "Hãy liệt kê các nhóm sản phẩm hạn chế trả hàng và cho một vài ví dụ trong mỗi nhóm." | shopee-phuong-thuc-va-phi-hoan-tra | 0.885 | ❌ | Document sai - nên là shopee-san-pham-han-che-tra-hang |
+| 5 | "Khi đơn hàng hoàn trả bị hư hỏng, thiếu hàng hoặc không đúng hàng, cần chuẩn bị bằng chứng gì?" | shopee-seller-phan-hoi-tra-hang-hoan-tien | 0.828 | ✅ | Đúng document (filter audience=seller worked! 1/2 điểm) |
 
 **Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 3 / 5 (60%)
 
-**Điểm số: 4/10 (40%)** - Query 1 perfect (2/2), Query 2 & 5 partial (1/2 mỗi câu)
+**Điểm số: 5/10 (50%)** - Query 1 & 2 perfect (2/2 mỗi câu), Query 5 partial (1/2)
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
 > Học được rằng **chất lượng embedding quyết định 70-80% accuracy** của RAG system. Ban đầu dùng hash-based mock embedding cho 0/5 marker found, nhưng sau khi nâng cấp lên keyword-based SmartMockEmbedder đã cải thiện lên 2/5 (40%). Nếu dùng real embedding model (SentenceTransformer hoặc OpenAI), accuracy có thể lên 70-80%. Điều này cho thấy không nên tối ưu chunking strategy quá sớm - cải thiện embedding trước, sau đó mới tune chunking.
