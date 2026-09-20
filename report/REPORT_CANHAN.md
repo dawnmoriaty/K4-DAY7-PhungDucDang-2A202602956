@@ -1,12 +1,12 @@
 # Báo Cáo Cá Nhân — Lab 7: Embedding & Vector Store
 
-**Họ tên:** [Tên sinh viên]
-**Nhóm:** [Tên nhóm]
+**Họ tên:** Phùng Đức Đăng
+**Nhóm:** Nhóm 3
 **Ngày:** [Ngày nộp]
 
 > **Nộp 1 bản / sinh viên.** Phần nhóm (lựa chọn tài liệu, thiết kế chiến lược, bộ câu hỏi đánh giá, demo) nộp chung 1 bản trong `REPORT_NHOM.md`. Chi tiết thang điểm: `docs/SCORING.md`.
 
-**Tổng điểm phần cá nhân: 60** = Khởi động (5) + Hướng tiếp cận (10) + Hoàn thiện code (30) + Dự đoán độ tương tự (5) + Kết quả truy xuất của tôi (10).
+**Tổng điểm phần cá nhân: 60** = Khởi động (5) + Hướng tiếp cận (10) + Hoàn thiện code 3(30) + Dự đoán độ tương tự (5) + Kết quả truy xuất của tôi (10).
 
 ---
 
@@ -15,29 +15,35 @@
 ### Độ tương tự Cosine (Cosine Similarity) (Bài tập 1.1)
 
 **Độ tương tự cosine cao (High cosine similarity) nghĩa là gì?**
-> *Viết 1-2 câu:*
+
+Khi hai đoạn văn bản có độ tương tự cosine cao, điều đó có nghĩa là các vector biểu diễn của chúng hướng về cùng một phía trong không gian nhiều chiều. Nói cách khác, dù nội dung có thể dùng từ ngữ khác nhau, chúng vẫn mang ý nghĩa tương đồng hoặc cùng một chủ đề.
 
 **Ví dụ có độ tương tự CAO:**
-- Câu A:
-- Câu B:
-- Tại sao tương đồng:
+- Câu A: "Chính sách hoàn tiền"
+- Câu B: "Quy định đổi trả"
+- Tại sao tương đồng: Dù dùng từ khác nhau nhưng máy tính hiểu chúng cùng nằm trong cụm chủ đề hỗ trợ khách hàng
 
 **Ví dụ có độ tương tự THẤP:**
-- Câu A:
-- Câu B:
-- Tại sao khác:
+- Câu A: "Chính sách hoàn tiền"
+- Câu B: "Thời tiết hôm nay"
+- Tại sao khác: Hai khái niệm không liên quan nên hướng của vector sẽ khác xa nhau
 
 **Tại sao độ tương tự cosine (cosine similarity) được ưu tiên hơn khoảng cách Euclid (Euclidean distance) cho text embeddings?**
-> *Viết 1-2 câu:*
+
+Khoảng cách Euclid (Euclidean distance) đo khoảng cách đường chim bay, nó bị ảnh hưởng bởi độ lớn (độ dài) của vector. Trong văn bản, một đoạn văn dài có thể có số lượng từ nhiều hơn làm vector "dài hơn" một đoạn ngắn, dù cả hai nói về cùng một chủ đề. Cosine similarity chỉ tập trung vào hướng (góc giữa hai vector) và triệt tiêu yếu tố độ dài. Điều này giúp hệ thống so sánh nghĩa của văn bản chính xác hơn mà không bị "nhiễu" bởi độ dài ngắn của đoạn văn. Ngoài ra, hầu hết các embedding model hiện đại đều trả về vector đã được chuẩn hóa về độ dài bằng 1, khi đó cosine thường là lựa chọn mặc định.
 
 ### Bài toán tính toán Chunking (Bài tập 1.2)
 
 **Tài liệu 10,000 ký tự, chunk_size=500, overlap=50. Bao nhiêu chunks?**
-> *Trình bày phép tính:*
-> *Đáp án:*
+
+Công thức: ceil((10000 - 50) / (500 - 50)) = ceil(9950 / 450) = ceil(22.111) = **23 chunks**
+Thực tế: 23 chunks
 
 **Nếu độ chồng chéo (overlap) tăng lên 100, số lượng chunk thay đổi thế nào? Tại sao muốn độ chồng chéo nhiều hơn?**
-> *Viết 1-2 câu:*
+
+Khi overlap tăng lên 100: ceil((10000 - 100) / (500 - 100)) = ceil(9900 / 400) = ceil(24.75) = **25 chunks** (tăng từ 23)
+
+Muốn tăng độ chồng chéo vì nó giữ lại thông tin ở ranh giới giữa các chunks. Khi hỏi retrieval, nếu câu hỏi liên quan đến thông tin ở ranh giới, overlap lớn giúp tìm thấy tốt hơn. Nhưng đánh đổi là phải lưu trữ nhiều chunks hơn.
 
 ---
 

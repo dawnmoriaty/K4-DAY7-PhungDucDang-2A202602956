@@ -14,7 +14,11 @@ Không yêu cầu toán học — hãy giải thích về mặt khái niệm:
 - Tại sao độ tương tự cosine lại được ưu tiên hơn khoảng cách Euclid (Euclidean distance) đối với text embeddings?
 
 > **Ghi kết quả vào:** Báo cáo — Phần 1 (Khởi động)
-
++  Khi hai đoạn văn bản có độ tương tự cosine cao, điều đó có nghĩa là các vector biểu diễn của chúng hướng về cùng một phía trong không gian nhiều chiều . Nói cách khác, dù nội dung có thể dùng từ ngữ khác nhau, chúng vẫn mang ý nghĩa tương đồng hoặc cùng một chủ đề 
++ Độ tương tự CAO: "Chính sách hoàn tiền" và "Quy định đổi trả" (dù dùng từ khác nhau nhưng máy tính hiểu chúng cùng nằm trong cụm chủ đề hỗ trợ khách hàng)
+Độ tương tự THẤP: "Chính sách hoàn tiền" và "Thời tiết hôm nay" (hai khái niệm không liên quan nên hướng của vector sẽ khác xa nhau)
++ Khoảng cách Euclid (Euclidean distance) đo khoảng cách đường chim bay, nó bị ảnh hưởng bởi độ lớn (độ dài) của vector . Trong văn bản, một đoạn văn dài có thể có số lượng từ nhiều hơn làm vector "dài hơn" một đoạn ngắn, dù cả hai nói về cùng một chủ đề.
+Cosine similarity chỉ tập trung vào hướng (góc giữa hai vector) và triệt tiêu yếu tố độ dài . Điều này giúp hệ thống so sánh nghĩa của văn bản chính xác hơn mà không bị "nhiễu" bởi độ dài ngắn của đoạn văn . Ngoài ra, hầu hết các embedding model hiện đại đều trả về vector đã được chuẩn hóa về độ dài bằng 1, khi đó cosine thường là lựa chọn mặc định .
 ---
 
 ### Bài tập 1.2 — Bài toán tính toán Chunking
@@ -24,7 +28,9 @@ Không yêu cầu toán học — hãy giải thích về mặt khái niệm:
 - Nếu độ chồng chéo (overlap) tăng lên 100, số lượng chunk sẽ thay đổi như thế nào? Tại sao bạn lại muốn tăng độ chồng chéo?
 
 > **Ghi kết quả vào:** Báo cáo — Phần 1 (Khởi động)
-
+Công thức (overlap=50): 23 chunks
+Thực tế (overlap=50): 23 chunks
+Công thức (overlap=100): 25 chunks
 ---
 
 ## Phần 2 — Lập trình cốt lõi (Cá nhân)
