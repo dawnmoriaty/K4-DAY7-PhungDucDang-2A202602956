@@ -48,8 +48,21 @@ class SentenceChunker:
 
     def chunk(self, text: str) -> list[str]:
         # TODO: split into sentences, group into chunks
-        raise NotImplementedError("Implement SentenceChunker.chunk")
-
+        if not text:
+            return []
+        
+        # Tách câu nhưng GIỮ dấu câu (lookahead)
+        # (?<=[.!?])\s+ = "sau dấu câu + space"
+        sentences = re.split(r'(?<=[.!?])\s+', text)
+        sentences = [s.strip() for s in sentences if s.strip()]
+        
+        # Nhóm theo max_sentences_per_chunk
+        chunks = []
+        for i in range(0, len(sentences), self.max_sentences_per_chunk):
+            chunk = ' '.join(sentences[i:i + self.max_sentences_per_chunk])
+            chunks.append(chunk)
+        
+        return chunks
 
 class RecursiveChunker:
     """
@@ -67,11 +80,65 @@ class RecursiveChunker:
 
     def chunk(self, text: str) -> list[str]:
         # TODO: implement recursive splitting strategy
-        raise NotImplementedError("Implement RecursiveChunker.chunk")
+        if not text:
+            return []
+        return self._split(text, self.separators)
 
     def _split(self, current_text: str, remaining_separators: list[str]) -> list[str]:
         # TODO: recursive helper used by RecursiveChunker.chunk
-        raise NotImplementedError("Implement RecursiveChunker._split")
+        # Base case 1: text đủ ngắn
+        if len(current_text) <= self.chunk_size:
+            return [current_text]
+        
+        # Base case 2: hết separators → cắt cứng
+        if not remaining_separators:
+            chunks = []
+            for i in range(0, len(current_text), self.chunk_size):
+                chunks.append(current_text[i:i+self.chunk_size])
+            return chunks
+        
+        # Lấy separator đầu tiên
+        sep = remaining_separators[0]
+        
+        # Base case 3: empty separator
+        if not sep:
+            chunks = []
+            for i in range(0, len(current_text), self.chunk_size):
+                chunks.append(current_text[i:i+self.chunk_size])
+            return chunks
+        
+        # Chia theo separator
+        parts = current_text.split(sep)
+        
+        # Đệ quy: nếu part dài quá → thử separator tiếp theo
+        good_chunks = []
+        for part in parts:
+            if len(part) > self.chunk_size:
+                # Quá dài → đệ quy với separator nhỏ hơn
+                good_chunks.extend(self._split(part, remaining_separators[1:]))
+            elif part:
+                # Đủ ngắn → giữ lại
+                good_chunks.append(part)
+        
+        # ⭐ BƯỚC GOM LẠI (quan trọng!)
+        # Nối các chunk nhỏ liền kề tới sát chunk_size
+        merged = []
+        current = ""
+        for chunk in good_chunks:
+            # Nếu nối được mà vẫn <= chunk_size → nối
+            if len(current) + len(sep) + len(chunk) <= self.chunk_size:
+                current = (current + sep + chunk) if current else chunk
+            else:
+                # Nếu không nối được → lưu current, bắt đầu chunk mới
+                if current:
+                    merged.append(current)
+                current = chunk
+        
+        # Lưu chunk cuối cùng
+        if current:
+            merged.append(current)
+        
+        return merged
 
 
 def _dot(a: list[float], b: list[float]) -> float:
@@ -87,7 +154,20 @@ def compute_similarity(vec_a: list[float], vec_b: list[float]) -> float:
     Returns 0.0 if either vector has zero magnitude.
     """
     # TODO: implement cosine similarity formula
-    raise NotImplementedError("Implement compute_similarity")
+    import math
+    
+    # Tính dot product
+    dot_product = _dot(vec_a, vec_b)
+    
+    # Tính độ dài (magnitude)
+    mag_a = math.sqrt(sum(x*x for x in vec_a))
+    mag_b = math.sqrt(sum(x*x for x in vec_b))
+    
+    # Chặn chia cho 0
+    if mag_a == 0 or mag_b == 0:
+        return 0.0
+    
+    return dot_product / (mag_a * mag_b)
 
 
 class ChunkingStrategyComparator:
@@ -95,4 +175,35 @@ class ChunkingStrategyComparator:
 
     def compare(self, text: str, chunk_size: int = 200) -> dict:
         # TODO: call each chunker, compute stats, return comparison dict
-        raise NotImplementedError("Implement ChunkingStrategyComparator.compare")
+        """Return dict with keys: fixed_size, by_sentences, recursive"""
+    
+        if not text:
+            return {
+                'fixed_size': {'count': 0, 'avg_length': 0.0, 'chunks': []},
+                'by_sentences': {'count': 0, 'avg_length': 0.0, 'chunks': []},
+                'recursive': {'count': 0, 'avg_length': 0.0, 'chunks': []}
+            }
+        
+        # Gọi 3 chunker
+        fixed_chunks = FixedSizeChunker(chunk_size=chunk_size).chunk(text)
+        sentence_chunks = SentenceChunker(max_sentences_per_chunk=3).chunk(text)
+        recursive_chunks = RecursiveChunker(chunk_size=chunk_size).chunk(text)
+        
+        # Helper: tính stats
+        def stats(chunks):
+            count = len(chunks)
+            if count == 0:
+                avg = 0.0
+            else:
+                avg = sum(len(c) for c in chunks) / count
+            return {
+                'count': count,
+                'avg_length': avg,
+                'chunks': chunks
+            }
+        
+        return {
+            'fixed_size': stats(fixed_chunks),
+            'by_sentences': stats(sentence_chunks),
+            'recursive': stats(recursive_chunks)
+        }
