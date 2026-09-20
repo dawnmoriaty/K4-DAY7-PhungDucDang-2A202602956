@@ -140,22 +140,24 @@ Chạy `ChunkingStrategyComparator().compare()` trên 2-3 tài liệu:
 ## 4. Thuyết trình (Demo) & Bài học nhóm — Nhóm (5 điểm)
 
 **Những phân tích (insights) hay nhất nhóm sẽ trình bày:**
-> 1. **Recursive > Hierarchical** mặc dù Hierarchical được dự đoán sẽ tốt hơn (40% vs 20% accuracy). Lý do: Recursive chunker giữ semantic coherence tốt hơn, còn Hierarchical tạo nhiều chunk quá mức, gây noise. → **Lesson**: Không phải lúc nào "structure-aware chunking" cũng tốt nhất.
-> 2. **Mock embedding giới hạn** - hầu hết câu hỏi không trả về đúng document vì embedding ngẫu nhiên. Nếu dùng real embedding (SentenceTransformer), accuracy sẽ cao hơn nhiều.
-> 3. **Metadata filter là bắt buộc** - Query 5 với audience=seller cho thấy 100% accuracy, nhưng không filter thì các chunker gặp khó khăn. Multi-audience/multi-domain data cần explicit metadata filtering.
+> 1. **Embedding quality > Chunking strategy**: Ban đầu dùng hash-based mock (0/5 marker found), nâng cấp lên keyword-based SmartMock → 2/5 (40%). Điều này chứng tỏ embedding là bottleneck chính, không phải chunking. Cải thiện embedding trước, sau đó mới optimize chunking.
+> 
+> 2. **Recursive > Hierarchical** mặc dù Hierarchical được dự đoán sẽ tốt hơn (40% vs 20% accuracy với old mock). Lý do: Recursive giữ semantic coherence tốt hơn, còn Hierarchical tạo nhiều chunk quá mức, gây noise. → **Lesson**: Không phải lúc nào "structure-aware chunking" cũng tốt nhất.
+> 
+> 3. **Metadata filter là bắt buộc** - Query 5 với audience=seller cho thấy 100% top-3 đúng document. Multi-audience/multi-domain data cần explicit metadata filtering để tránh trả lời sai đối tượng.
 
 **Bài học rút ra khi so sánh trong nhóm:**
-> Cùng một bộ tài liệu Shopee nhưng ba chiến lược chunking hoàn toàn khác nhau:
-> - **RecursiveChunker**: 121 chunks, 40% accuracy → "less is more"
-> - **HierarchicalChunker**: 178 chunks, 20% accuracy → extra structure không giúp ích
-> - **MixedChunker**: 178 chunks, 20% accuracy → combining không bao giờ đơn giản như kỳ vọng
-> 
-> Điều này dạy chúng ta rằng **RAG quality không phải hàm tuyến tính** của số lượng chunks hoặc số lượng strategies. Cần phải **thử nghiệm thực tế**, không chỉ lý thuyết.
+> **Embedding bottleneck discovery**: Khi so sánh trong nhóm, phát hiện ra rằng mọi chunking strategy đều cho kết quả thấp với hash-based mock embedding (0% marker found). Sau khi implement SmartMockEmbedder (keyword TF-IDF), **TẤT CẢ strategies đều cải thiện 40% marker found**. Điều này dạy chúng ta:
+> - Đừng optimize premature - identify bottleneck trước (embedding vs chunking)
+> - A/B test với cùng embedding để isolate chunking effect
+> - Real embedding (SentenceTransformer, OpenAI) là must-have cho production
+>
+> **Chunking comparison vẫn valid**: Recursive vẫn thắng Hierarchical ở cả 2 embedding methods, chứng tỏ insight về semantic coherence là đúng.
 
 **Nếu làm lại, nhóm sẽ thay đổi gì trong chiến lược dữ liệu (data strategy)?**
-> 1. **Dùng real embedding model** (SentenceTransformer, Ollama, hoặc OpenAI) thay vì mock embedding - điều này sẽ giúp benchmark cho kết quả thực tế, không chỉ lý thuyết.
-> 2. **Thêm metadata phong phú hơn** - không chỉ `audience` mà còn `category` (refund, shipping, condition, etc.) để cho phép multi-factor filtering.
-> 3. **Automated strategy selection** - build một heuristic để chọn chunking strategy tự động dựa trên tính chất tài liệu (length, structure, language). Recursive cho non-structured, Hierarchical cho Markdown-rich documents.
+> 1. **Dùng real embedding từ đầu** - Setup SentenceTransformer/Ollama trong buổi warm-up để có baseline chính xác. SmartMock tốt cho demo nhưng real embeddings cần cho production assessment.
+> 2. **Thêm metadata phong phú hơn** - Không chỉ `audience` mà còn `topic` (refund, shipping, condition), `urgency` (critical, normal), `doc_type` (policy, faq, guide) để multi-dimensional filtering.
+> 3. **Implement embedding cache** - Hash content → save embedding để không re-compute mỗi lần chạy benchmark. Tiết kiệm cost với OpenAI API hoặc time với local models.
 
 ---
 

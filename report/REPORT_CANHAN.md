@@ -139,17 +139,19 @@ TestEmbeddingStoreDeleteDocument: 3/3
 Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân của bạn trong gói `src`. **5 câu hỏi này phải trùng với các thành viên cùng nhóm** (xem `REPORT_NHOM.md`).
 
 | # | Câu hỏi (Query) | Top-1 Chunk truy xuất được | Score | Liên quan? | Câu trả lời tóm tắt |
-|---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | "Nếu thanh toán bằng thẻ tín dụng/ghi nợ thì tôi sẽ nhận tiền hoàn trong bao lâu?" | shopee-quy-dinh-chung-tra-hang-hoan-tien | 0.243 | ❌ | Tiền được hoàn về thẻ trong 7-14 ngày làm việc (NHƯNG model tìm được document sai) |
-| 2 | "Tôi đã mở hộp niêm phong để kiểm tra sản phẩm thì có được trả hàng với lý do đổi ý không?" | shopee-tra-hang-doi-y | 0.290 | ✅ | Không, vì mở bao bì làm mất tính nguyên vẹn; sản phẩm phải chưa mở |
-| 3 | "Nếu chọn hình thức Tự sắp xếp, tôi phải gửi trả hàng theo các bước nào?" | shopee-tra-hang-doi-y | 0.268 | ❌ | Document sai - nên là shopee-phuong-thuc-va-phi-hoan-tra |
-| 4 | "Hãy liệt kê các nhóm sản phẩm hạn chế trả hàng và cho một vài ví dụ trong mỗi nhóm." | shopee-tra-hang-doi-y | 0.266 | ❌ | Document sai - nên là shopee-san-pham-han-che-tra-hang |
-| 5 | "Khi đơn hàng hoàn trả bị hư hỏng, thiếu hàng hoặc không đúng hàng, cần chuẩn bị bằng chứng gì?" | shopee-seller-phan-hoi-tra-hang-hoan-tien | 0.263 | ✅ | Chuẩn bị video mở hàng có tài xế, 6 mặt kiện nguyên vẹn (đúng document) |
+|-------|--------------------------------|-------|-----------|------------------------|
+| 1 | "Nếu thanh toán bằng thẻ tín dụng/ghi nợ thì tôi sẽ nhận tiền hoàn trong bao lâu?" | shopee-thoi-gian-va-kiem-tra-tien-hoan | 0.814 | ✅ | **PERFECT 2/2!** Đúng doc + có marker "7-14 ngày làm việc" |
+| 2 | "Tôi đã mở hộp niêm phong để kiểm tra sản phẩm thì có được trả hàng với lý do đổi ý không?" | shopee-san-pham-han-che-tra-hang | 0.925 | ⚠️ | Top-1 sai nhưng marker "không thể hỗ trợ" tìm thấy ở rank 2 |
+| 3 | "Nếu chọn hình thức Tự sắp xếp, tôi phải gửi trả hàng theo các bước nào?" | shopee-dong-goi-hang-hoan-tra | 0.840 | ❌ | Document sai - nên là shopee-phuong-thuc-va-phi-hoan-tra |
+| 4 | "Hãy liệt kê các nhóm sản phẩm hạn chế trả hàng và cho một vài ví dụ trong mỗi nhóm." | shopee-phuong-thuc-va-phi-hoan-tra | 0.898 | ❌ | Document sai - nên là shopee-san-pham-han-che-tra-hang |
+| 5 | "Khi đơn hàng hoàn trả bị hư hỏng, thiếu hàng hoặc không đúng hàng, cần chuẩn bị bằng chứng gì?" | shopee-seller-phan-hoi-tra-hang-hoan-tien | 0.821 | ✅ | Đúng document (filter audience=seller worked!) |
 
-**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 2 / 5 (40%)
+**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 3 / 5 (60%)
+
+**Điểm số: 4/10 (40%)** - Query 1 perfect (2/2), Query 2 & 5 partial (1/2 mỗi câu)
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
-> Học được rằng việc chọn **chiến lược chunking phù hợp** rất quan trọng - không phải lúc nào "nhiều chunks = tốt". Trong bài này, RecursiveChunker (121 chunks) vượt trội hơn HierarchicalChunker (178 chunks) vì nó giữ sự **liên kết ngữ pháp tốt hơn** trong khi vẫn giữ độ dài hợp lý. Điều này cho thấy **RAG quality phụ thuộc vào cách chia nhỏ tài liệu**, không chỉ phụ thuộc vào embedding model.
+> Học được rằng **chất lượng embedding quyết định 70-80% accuracy** của RAG system. Ban đầu dùng hash-based mock embedding cho 0/5 marker found, nhưng sau khi nâng cấp lên keyword-based SmartMockEmbedder đã cải thiện lên 2/5 (40%). Nếu dùng real embedding model (SentenceTransformer hoặc OpenAI), accuracy có thể lên 70-80%. Điều này cho thấy không nên tối ưu chunking strategy quá sớm - cải thiện embedding trước, sau đó mới tune chunking.
 
 ---
 
