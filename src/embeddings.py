@@ -30,6 +30,71 @@ class MockEmbedder:
         return [value / norm for value in vector]
 
 
+class SmartMockEmbedder:
+    """
+    Improved mock embedder with keyword-based similarity.
+    Better than pure hash for demo purposes - captures semantic overlap via keywords.
+    """
+    
+    def __init__(self, dim: int = 128) -> None:
+        self.dim = dim
+        self._backend_name = "smart mock embeddings (keyword-based)"
+        
+        # Vietnamese stopwords
+        self.stopwords = {
+            'là', 'của', 'và', 'có', 'được', 'trong', 'cho', 'này', 'với', 
+            'không', 'các', 'đã', 'một', 'để', 'tôi', 'bạn', 'trên', 'về',
+            'thì', 'sẽ', 'như', 'khi', 'hay', 'nhưng', 'hoặc', 'đến', 'từ'
+        }
+    
+    def _extract_keywords(self, text: str) -> list[str]:
+        """Extract keywords from text (simple tokenization)"""
+        # Lowercase and split
+        text_lower = text.lower()
+        
+        # Simple word extraction (remove punctuation)
+        import re
+        words = re.findall(r'\b\w+\b', text_lower)
+        
+        # Filter stopwords
+        keywords = [w for w in words if w not in self.stopwords and len(w) > 2]
+        
+        return keywords
+    
+    def __call__(self, text: str) -> list[float]:
+        """Generate embedding based on keyword TF-IDF style"""
+        keywords = self._extract_keywords(text)
+        
+        # Create vector based on keyword hashes
+        vector = [0.0] * self.dim
+        
+        if not keywords:
+            # Fallback to hash-based if no keywords
+            digest = hashlib.md5(text.encode()).hexdigest()
+            seed = int(digest, 16)
+            for i in range(self.dim):
+                seed = (seed * 1664525 + 1013904223) & 0xFFFFFFFF
+                vector[i] = (seed / 0xFFFFFFFF) * 2 - 1
+        else:
+            # Each keyword contributes to specific dimensions
+            for keyword in keywords:
+                # Hash keyword to get dimension indices
+                kw_hash = hashlib.md5(keyword.encode()).hexdigest()
+                kw_seed = int(kw_hash, 16)
+                
+                # Each keyword affects ~10% of dimensions
+                num_dims = max(1, self.dim // 10)
+                for _ in range(num_dims):
+                    kw_seed = (kw_seed * 1664525 + 1013904223) & 0xFFFFFFFF
+                    idx = kw_seed % self.dim
+                    # Add contribution (so similar keywords → similar vectors)
+                    vector[idx] += 1.0 / len(keywords)
+        
+        # Normalize
+        norm = math.sqrt(sum(v * v for v in vector)) or 1.0
+        return [v / norm for v in vector]
+
+
 class LocalEmbedder:
     """Sentence Transformers-backed local embedder."""
 

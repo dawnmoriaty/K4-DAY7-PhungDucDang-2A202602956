@@ -18,14 +18,14 @@ Answer marker: 7 - 14 ngày làm việc
 🔍 Searching with filter: audience=buyer
 
 📊 Top-3 Results:
-  [1]    doc_id=shopee-quy-dinh-chung-tra-hang-hoan-tien, score=0.2427, marker=❌
-      Preview: > - Shop Voucher (mã do Người bán phát hành) và Mã miễn phí vận chuyển sẽ không được hoàn lại trong ...
-  [2]    doc_id=shopee-tra-hang-doi-y, score=0.2079, marker=❌
-      Preview: - Phương tiện giao thông & Dầu nhớt động cơ - Trang sức vàng, thẻ vàng  > **(*) Lưu ý:** Danh mục sả...
-  [3]    doc_id=shopee-tra-hang-doi-y, score=0.1981, marker=❌
-      Preview: ## 5. Câu hỏi thường gặp  ### Câu 1: Tôi đã mở hộp để kiểm tra sản phẩm, còn được trả hàng với lý do...
+  [1] 🎯 doc_id=shopee-thoi-gian-va-kiem-tra-tien-hoan, score=0.8635, marker=✅
+      Preview: - Tiền hoàn trả được gửi về Thẻ nội địa Napas. - Thời gian nhận tiền hoàn: 2 - 5 ngày làm việc, tùy ...
+  [2]    doc_id=shopee-tra-hang-doi-y, score=0.8397, marker=❌
+      Preview: - Tình trạng sản phẩm: Sản phẩm phải còn mới hoàn toàn - chưa qua sử dụng, chưa giặt/ủi và chưa có b...
+  [3] 🎯 doc_id=shopee-thoi-gian-va-kiem-tra-tien-hoan, score=0.8210, marker=❌
+      Preview:   - Số tiền thanh toán bằng phương thức thanh toán khác: hoàn về Ví ShopeePay (nếu trước đó bạn chọn...
 
-❌ Score: 0/2 (Top-1 correct: False, Marker in top-3: False)
+✅ Score: 2/2 (Top-1 correct: True, Marker in top-3: True)
 
 ================================================================================
 Query #2: Tôi đã mở hộp niêm phong để kiểm tra sản phẩm thì có được trả hàng với lý do đổi ý không?
@@ -34,14 +34,14 @@ Answer marker: không thể hỗ trợ trả hàng với lý do Đổi ý
 🔍 Searching with filter: audience=buyer
 
 📊 Top-3 Results:
-  [1] 🎯 doc_id=shopee-tra-hang-doi-y, score=0.2898, marker=❌
-      Preview: Các sản phẩm có niêm phong, kích hoạt hoặc bảo hành:  - Thiết bị di động, Máy tính - Thiết bị Điện g...
-  [2]    doc_id=shopee-phuong-thuc-va-phi-hoan-tra, score=0.2856, marker=❌
+  [1]    doc_id=shopee-san-pham-han-che-tra-hang, score=0.9245, marker=❌
+      Preview: # [Trả hàng/ Hoàn tiền] Sản phẩm hạn chế trả hàng là gì?  Sản phẩm hạn chế trả hàng là những sản phẩ...
+  [2] 🎯 doc_id=shopee-tra-hang-doi-y, score=0.9170, marker=✅
+      Preview: ## 5. Câu hỏi thường gặp  ### Câu 1: Tôi đã mở hộp để kiểm tra sản phẩm, còn được trả hàng với lý do...
+  [3]    doc_id=shopee-phuong-thuc-va-phi-hoan-tra, score=0.8821, marker=❌
       Preview: - Nếu bạn yêu cầu Trả hàng/Hoàn tiền cho tất cả sản phẩm trong đơn hàng đã đặt và được Shopee/Người ...
-  [3]    doc_id=shopee-phuong-thuc-va-phi-hoan-tra, score=0.2671, marker=❌
-      Preview: 1. Đóng gói hàng. 2. Mang hàng đến bưu cục bất kỳ để gửi trả theo địa chỉ Shopee cung cấp. 3. ...
 
-⚠️ Score: 1/2 (Top-1 correct: True, Marker in top-3: False)
+⚠️ Score: 1/2 (Top-1 correct: False, Marker in top-3: True)
 
 ================================================================================
 Query #3: Nếu chọn hình thức Tự sắp xếp, tôi phải gửi trả hàng theo các bước nào?
@@ -50,12 +50,12 @@ Answer marker: Đăng tải bằng chứng trả hàng
 🔍 Searching with filter: audience=buyer
 
 📊 Top-3 Results:
-  [1]    doc_id=shopee-tra-hang-doi-y, score=0.2682, marker=❌
-      Preview: Các sản phẩm có niêm phong, kích hoạt hoặc bảo hành:  - Thiết bị di động, Máy tính - Thiết bị Điện g...
-  [2]    doc_id=shopee-kiem-tra-hoan-tien-spaylater, score=0.2643, marker=❌
-      Preview: Hóa đơn gần nhất chỉ bao gồm 1 giao dịch cần thanh toán của đơn Trả hàng/Hoàn tiền.  **Hóa đơn 24/10...
-  [3]    doc_id=shopee-kiem-tra-hoan-tien-spaylater, score=0.2386, marker=❌
-      Preview: ## (**) Ngày phát hành hóa đơn và ngày đến hạn thanh toán  Mỗi Người dùng sẽ có ngày phát hành hoá đ...
+  [1]    doc_id=shopee-dong-goi-hang-hoan-tra, score=0.8398, marker=❌
+      Preview: - Bạn cần sử dụng hộp vận chuyển bên ngoài để đảm bảo sản phẩm và hộp của nhà sản xuất...
+  [2]    doc_id=shopee-dong-goi-hang-hoan-tra, score=0.8155, marker=❌
+      Preview: ### 4. Giao hàng cho nhân viên nhận hàng hoàn trả  - Thời gian chọn hình thức trả hàng: kiểm tra t...
+  [3]    doc_id=shopee-thoi-gian-va-kiem-tra-tien-hoan, score=0.8154, marker=❌
+      Preview: - Trong quá trình xử lý nếu Người bán có khiếu nại, Shopee sẽ xem xét & thông báo kết quả cuối cùng ...
 
 ❌ Score: 0/2 (Top-1 correct: False, Marker in top-3: False)
 
@@ -66,12 +66,12 @@ Answer marker: Sản phẩm hạn chế trả hàng thuộc các nhóm
 🔍 Searching with filter: audience=buyer
 
 📊 Top-3 Results:
-  [1]    doc_id=shopee-tra-hang-doi-y, score=0.2656, marker=❌
+  [1]    doc_id=shopee-phuong-thuc-va-phi-hoan-tra, score=0.8983, marker=❌
+      Preview: - Liên hệ đơn vị vận chuyển hỗ trợ nhận đơn hàng hoàn trả của bạn để được hỗ trợ. - Hoặc bạn cũng có...
+  [2]    doc_id=shopee-tra-hang-doi-y, score=0.8606, marker=❌
       Preview: Nhằm nâng cao và đảm bảo chất lượng sản phẩm cũng như hạn chế các rủi ro đối với cả Người mua tiếp t...
-  [2]    doc_id=shopee-tra-hang-doi-y, score=0.2384, marker=❌
-      Preview: - Không có dấu vết sử dụng: Sản phẩm không được xuất hiện các dấu hiệu cho thấy đã qua sử dụng, ví d...
-  [3]    doc_id=shopee-theo-doi-van-chuyen-hang-hoan-tra, score=0.2370, marker=❌
-      Preview: # [Trả hàng/ Hoàn tiền] Cách theo dõi tình trạng vận chuyển hàng hoàn trả  ## 1. Nếu bạn chọn trả hà...
+  [3]    doc_id=shopee-kiem-tra-hoan-tien-spaylater, score=0.8553, marker=❌
+      Preview: - Đối với đơn hàng Shopee: khi bạn nhấn vào nút "Đã nhận được hàng" hoặc 3 ngày sau khi đơn hàng đượ...
 
 ❌ Score: 0/2 (Top-1 correct: False, Marker in top-3: False)
 
@@ -82,12 +82,12 @@ Answer marker: 6 mặt kiện hàng nguyên vẹn
 🔍 Searching with filter: audience=seller
 
 📊 Top-3 Results:
-  [1] 🎯 doc_id=shopee-seller-phan-hoi-tra-hang-hoan-tien, score=0.2632, marker=❌
-      Preview: Shop có thể tham khảo danh sách sản phẩm hạn chế trả hàng tại bài viết Quy trình Trả hàng và hoàn ti...
-  [2] 🎯 doc_id=shopee-seller-phan-hoi-tra-hang-hoan-tien, score=0.2038, marker=❌
-      Preview: Shop hãy yên tâm vì Người mua có yếu tố gian lận và bị Shopee phát hiện sẽ được đưa vào danh sách th...
-  [3] 🎯 doc_id=shopee-seller-phan-hoi-tra-hang-hoan-tien, score=0.1321, marker=❌
-      Preview: - Lịch sử mua hàng của Người mua được xem xét kỹ lưỡng  - Người mua nghi ngờ có dấu hiệu gian lận sẽ...
+  [1] 🎯 doc_id=shopee-seller-phan-hoi-tra-hang-hoan-tien, score=0.8211, marker=❌
+      Preview: - Dựa trên lý do và bằng chứng khiếu nại chính đáng.  ### 6. Làm thế nào để kiểm tra trạng thái đơn ...
+  [2] 🎯 doc_id=shopee-seller-phan-hoi-tra-hang-hoan-tien, score=0.8198, marker=❌
+      Preview: Shop có thể khiếu nại “Chưa nhận được hàng” hoặc “Hàng hoàn không còn nguyên vẹn” theo thời gian quy...
+  [3] 🎯 doc_id=shopee-seller-phan-hoi-tra-hang-hoan-tien, score=0.8058, marker=❌
+      Preview: - Đơn TTHT được chấp nhận hoàn tiền ngay (không trả hàng). Shopee sẽ chủ động hoàn lại phí vận chuyể...
 
 ⚠️ Score: 1/2 (Top-1 correct: True, Marker in top-3: False)
 
@@ -97,9 +97,9 @@ Answer marker: 6 mặt kiện hàng nguyên vẹn
 ================================================================================
 Total Chunks: 121
 Total Queries: 5
-Total Score: 2/10 (20%)
+Total Score: 4/10 (40%)
 Top-1 Correct: 2/5 (40%)
-Marker Found in Top-3: 0/5 (0%)
+Marker Found in Top-3: 2/5 (40%)
 
 ================================================================================
 

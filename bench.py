@@ -17,8 +17,11 @@ from src.chunking import (
 )
 from src.store import EmbeddingStore
 from src.agent import KnowledgeBaseAgent
-from src.embeddings import _mock_embed  # Đổi thành real embedding nếu có
+from src.embeddings import SmartMockEmbedder  # Better than pure mock
 from src.models import Document
+
+# Embedding backend - Đổi thành real embedding nếu có
+EMBEDDING_FN = SmartMockEmbedder()  # Keyword-based, better than hash
 
 # ============================================================================
 # CHIẾN LƯỢC CỦA THÀNH VIÊN NÀY
@@ -154,7 +157,7 @@ def run_benchmark():
     
     # 2. Nạp vào EmbeddingStore
     print("⏳ Nạp vào EmbeddingStore...")
-    store = EmbeddingStore(embedding_fn=_mock_embed)
+    store = EmbeddingStore(embedding_fn=EMBEDDING_FN)
     store.add_documents(documents)
     print(f"✅ Store size: {store.get_collection_size()} chunks\n")
     
