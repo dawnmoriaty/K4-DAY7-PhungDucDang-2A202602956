@@ -207,3 +207,199 @@ class ChunkingStrategyComparator:
             'by_sentences': stats(sentence_chunks),
             'recursive': stats(recursive_chunks)
         }
+
+
+
+class HierarchicalChunker:
+    """
+    Split text by hierarchical structure (headings/sections).
+    
+    Designed for structured documents like policies, terms, regulations.
+    Each section becomes a chunk. Long sections are recursively split.
+    
+    Features:
+        - Preserves heading context in each chunk
+        - Respects document structure (## Section → ### Subsection)
+        - Falls back to RecursiveChunker for oversized sections
+    """
+    
+    def __init__(self, chunk_size: int = 1000, preserve_headings: bool = True) -> None:
+        self.chunk_size = chunk_size
+        self.preserve_headings = preserve_headings
+        self._recursive_fallback = RecursiveChunker(chunk_size=chunk_size)
+    
+    def chunk(self, text: str) -> list[str]:
+        """
+        Split by Markdown headings (## Header, ### Subheader).
+        
+        Algorithm:
+            1. Detect headings (##, ###, ####)
+            2. Split into sections
+            3. For each section:
+               - If small enough → keep as-is
+               - If too large → recursive split BUT preserve heading
+        
+        Example:
+            Input:
+                ## Chính Sách Đổi Trả
+                Khách hàng có 7 ngày...
+                
+                ## Chính Sách Bảo Hành
+                Sản phẩm được bảo hành...
+            
+            Output:
+                [
+                    "## Chính Sách Đổi Trả\nKhách hàng có 7 ngày...",
+                    "## Chính Sách Bảo Hành\nSản phẩm được bảo hành..."
+                ]
+        """
+        if not text:
+            return []
+        
+        # Detect headings: lines starting with ## or ###
+        lines = text.split('\n')
+        sections = []
+        current_heading = ""
+        current_content = []
+        
+        for line in lines:
+            # Check if line is a heading
+            if re.match(r'^#{2,4}\s+', line):
+                # Save previous section
+                if current_content:
+                    section_text = '\n'.join(current_content).strip()
+                    if section_text:
+                        sections.append({
+                            'heading': current_heading,
+                            'content': section_text
+                        })
+                
+                # Start new section
+                current_heading = line
+                current_content = [line] if self.preserve_headings else []
+            else:
+                current_content.append(line)
+        
+        # Save last section
+        if current_content:
+            section_text = '\n'.join(current_content).strip()
+            if section_text:
+                sections.append({
+                    'heading': current_heading,
+                    'content': section_text
+                })
+        
+        # If no headings found, treat entire text as one section
+        if not sections:
+            if len(text) <= self.chunk_size:
+                return [text]
+            else:
+                return self._recursive_fallback.chunk(text)
+        
+        # Process each section
+        chunks = []
+        for section in sections:
+            content = section['content']
+            heading = section['heading']
+            
+            # If section fits → keep as-is
+            if len(content) <= self.chunk_size:
+                chunks.append(content)
+            else:
+                # Section too large → split recursively but preserve heading
+                sub_chunks = self._recursive_fallback.chunk(content)
+                
+                # Re-attach heading to each sub-chunk
+                if self.preserve_headings and heading:
+                    for i, sub_chunk in enumerate(sub_chunks):
+                        # Only add heading to first sub-chunk
+                        if i == 0:
+                            chunks.append(sub_chunk)
+                        else:
+                            # For subsequent chunks, add heading + context marker
+                            chunks.append(f"{heading} (tiếp)\n{sub_chunk}")
+                else:
+                    chunks.extend(sub_chunks)
+        
+        return chunks
+    
+    def chunk_with_metadata(self, text: str) -> list[dict]:
+        """
+        Return chunks with metadata about their hierarchical position.
+        
+        Returns:
+            List of dicts with keys:
+                - content: chunk text
+                - heading: section heading (if any)
+                - level: heading level (2=##, 3=###, 4=####)
+                - index: chunk index within section
+        
+        Useful for preserving document structure in metadata.
+        """
+        if not text:
+            return []
+        
+        chunks_with_meta = []
+        lines = text.split('\n')
+        
+        current_heading = ""
+        current_level = 0
+        current_content = []
+        section_index = 0
+        
+        for line in lines:
+            heading_match = re.match(r'^(#{2,4})\s+(.+)$', line)
+            
+            if heading_match:
+                # Save previous section
+                if current_content:
+                    section_text = '\n'.join(current_content).strip()
+                    if section_text:
+                        if len(section_text) <= self.chunk_size:
+                            chunks_with_meta.append({
+                                'content': section_text,
+                                'heading': current_heading,
+                                'level': current_level,
+                                'index': 0
+                            })
+                        else:
+                            # Split large section
+                            sub_chunks = self._recursive_fallback.chunk(section_text)
+                            for idx, sub in enumerate(sub_chunks):
+                                chunks_with_meta.append({
+                                    'content': sub,
+                                    'heading': current_heading,
+                                    'level': current_level,
+                                    'index': idx
+                                })
+                
+                # Start new section
+                current_heading = heading_match.group(2).strip()
+                current_level = len(heading_match.group(1))
+                current_content = [line] if self.preserve_headings else []
+                section_index += 1
+            else:
+                current_content.append(line)
+        
+        # Save last section
+        if current_content:
+            section_text = '\n'.join(current_content).strip()
+            if section_text:
+                if len(section_text) <= self.chunk_size:
+                    chunks_with_meta.append({
+                        'content': section_text,
+                        'heading': current_heading,
+                        'level': current_level,
+                        'index': 0
+                    })
+                else:
+                    sub_chunks = self._recursive_fallback.chunk(section_text)
+                    for idx, sub in enumerate(sub_chunks):
+                        chunks_with_meta.append({
+                            'content': sub,
+                            'heading': current_heading,
+                            'level': current_level,
+                            'index': idx
+                        })
+        
+        return chunks_with_meta
