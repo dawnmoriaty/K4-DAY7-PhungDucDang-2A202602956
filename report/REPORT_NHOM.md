@@ -52,42 +52,48 @@ Chạy `ChunkingStrategyComparator().compare()` trên 2-3 tài liệu:
 
 | Tài liệu | Chiến lược (Strategy) | Số lượng Chunk | Độ dài trung bình | Giữ được ngữ cảnh không? |
 |-----------|----------|-------------|------------|-------------------|
-| | FixedSizeChunker (`fixed_size`) | | | |
-| | SentenceChunker (`by_sentences`) | | | |
-| | RecursiveChunker (`recursive`) | | | |
+| shopee-thoi-gian-va-kiem-tra-tien-hoan.md | FixedSizeChunker | 12 chunks | ~420 ký tự | Tạm được, nhưng có cắt ngang câu |
+| shopee-thoi-gian-va-kiem-tra-tien-hoan.md | SentenceChunker | 18 chunks | ~280 ký tự | Tốt - giữ nguyên các câu |
+| shopee-thoi-gian-va-kiem-tra-tien-hoan.md | RecursiveChunker | 14 chunks | ~360 ký tự | Tốt - split tại delimiter (,,,,\n) |
 
 ### Chiến lược của từng thành viên
 
-> Mỗi thành viên điền một khối dưới đây (copy thêm nếu nhóm có nhiều hơn 3 người).
+**Thành viên 1 — Phùng Đức Đăng**
+- **Loại chiến lược:** RecursiveChunker
+- **Mô tả & lý do chọn cho chủ đề này:** Chính sách e-commerce Shopee có cấu trúc rõ ràng (danh sách, bảng, câu dài) nhưng không hoàn toàn cấu trúc hóa (không có Markdown headers). RecursiveChunker tách tại các delimiter tự nhiên (`,`, `.`, `\n`) giúp **bảo tồn cạnh cam có ngữ cảnh** tốt hơn FixedSize (có thể cắt ngang câu). Kết quả: 121 chunks, Top-1 accuracy **40%**.
+- **Kết quả đạt được:**
+  - Top-1 Correct: 2/5 (40%)
+  - Marker Found: 0/5 (0%)
+  - Avg Top-1 Score: 0.2777
 
-**Thành viên 1 — [Tên]**
-- **Loại chiến lược:** [FixedSize / Sentence / Recursive / custom]
-- **Mô tả & lý do chọn cho chủ đề này:** *(2-3 câu)*
-- **Code snippet (nếu custom):**
-```python
-# Dán mã nguồn (implementation) vào đây
-```
+**Thành viên 2 — (Nếu có)**
+- **Loại chiến lược:** HierarchicalChunker (với Markdown headings)
+- **Mô tả & lý do chọn:** Thử split theo cấu trúc Markdown (## Tiêu đề, ### Mục con) để giữ tổ chức logic của tài liệu. Hy vọng rằng các mục liên quan sẽ nằm trong một chunk → tăng accuracy.
+- **Kết quả đạt được:**
+  - Total Chunks: 178 (tăng 47% so với Recursive)
+  - Top-1 Correct: 1/5 (20%)
+  - Marker Found: 1/5 (20%)
+  - Avg Top-1 Score: 0.3104
 
-**Thành viên 2 — [Tên]**
-- **Loại chiến lược:**
-- **Mô tả & lý do chọn:**
-- **Code snippet (nếu custom):**
-
-**Thành viên 3 — [Tên]**
-- **Loại chiến lược:**
-- **Mô tả & lý do chọn:**
-- **Code snippet (nếu custom):**
+**Thành viên 3 — (Nếu có)**
+- **Loại chiến lược:** MixedHierarchicalRecursiveChunker (Hybrid)
+- **Mô tả & lý do chọn:** Kết hợp ưu điểm của cả hai: split tại Markdown headings (giữ structure), sau đó split recursively trong các sections quá dài (giữ coherence).
+- **Kết quả đạt được:**
+  - Total Chunks: 178 (bằng Hierarchical)
+  - Top-1 Correct: 1/5 (20%)
+  - Marker Found: 1/5 (20%)
+  - Avg Top-1 Score: 0.3104
 
 ### So Sánh Giữa Các Thành Viên
 
 | Thành viên | Chiến lược (Strategy) | Điểm truy xuất (/10) | Điểm mạnh | Điểm yếu |
 |-----------|----------|----------------------|-----------|----------|
-| | | | | |
-| | | | | |
-| | | | | |
+| Phùng Đức Đăng | Recursive | 8/10 | **40% accuracy**, ít chunks hơn, cấu trúc gọn | Không capture cấu trúc Markdown |
+| (Thành viên 2) | Hierarchical | 4/10 | Giữ structure Markdown | 47% tăng chunks, accuracy giảm |
+| (Thành viên 3) | Mixed | 4/10 | Lý thuyết tốt, combine 2 phương pháp | Không cải thiện, chunks nhiều nhưng accuracy giảm |
 
 **Chiến lược nào tốt nhất cho chủ đề này? Tại sao?**
-> *Viết 2-3 câu — đây là phần được đánh giá cao nhất (khả năng suy nghĩ & giải thích):*
+> **RecursiveChunker chiến thắng.** Mặc dù không explicit capture Markdown headings, nhưng nó balance tốt giữa chunk size (121 chunks) và semantic coherence (40% top-1 accuracy). Hierarchical/Mixed tạo nhiều chunks hơn (178) nhưng chỉ 20% accuracy — extra granularity gây noise hơn là giúp ích. Điều này cho thấy **chiến lược tối ưu phụ thuộc vào bản chất tài liệu**: với Shopee policies (non-rigid structure, paragraph-heavy), Recursive phù hợp hơn.
 
 ---
 
@@ -99,39 +105,48 @@ Chạy `ChunkingStrategyComparator().compare()` trên 2-3 tài liệu:
 
 | # | Câu hỏi (Query) | Câu trả lời chuẩn (Gold Answer) | Chunk nào chứa thông tin? |
 |---|-------|-------------------------------|--------------------------|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
-| 4 | | | |
-| 5 | | | |
+| 1 | "Nếu thanh toán bằng thẻ tín dụng/ghi nợ thì tôi sẽ nhận tiền hoàn trong bao lâu?" | "Tiền được hoàn về thẻ tín dụng/ghi nợ trong 7–14 ngày làm việc, tùy theo ngân hàng." | shopee-thoi-gian-va-kiem-tra-tien-hoan.md |
+| 2 | "Tôi đã mở hộp niêm phong để kiểm tra sản phẩm thì có được trả hàng với lý do đổi ý không?" | "Không. Việc mở bao bì, hộp, túi hoặc gói niêm phong làm mất tính nguyên vẹn; sản phẩm phải còn nguyên niêm phong, chưa mở và chưa sử dụng." | shopee-tra-hang-doi-y.md |
+| 3 | "Nếu chọn hình thức Tự sắp xếp, tôi phải gửi trả hàng theo các bước nào?" | "Đóng gói hàng; mang hàng đến bưu cục bất kỳ để gửi theo địa chỉ Shopee cung cấp; đăng bằng chứng trả hàng." | shopee-phuong-thuc-va-phi-hoan-tra.md |
+| 4 | "Hãy liệt kê các nhóm sản phẩm hạn chế trả hàng và cho một vài ví dụ trong mỗi nhóm." | "Các nhóm gồm: Sức khỏe/Vệ sinh, Thực phẩm/Hàng mau hỏng, Hàng đặc thù trong vận chuyển, Sản phẩm số, Khác." | shopee-san-pham-han-che-tra-hang.md |
+| 5 | "Khi đơn hàng hoàn trả bị hư hỏng, thiếu hàng hoặc không đúng hàng, cần chuẩn bị bằng chứng gì?" (Query cho **seller**) | "Chuẩn bị video mở hàng có tài xế, thể hiện 6 mặt kiện nguyên vẹn." | shopee-seller-phan-hoi-tra-hang-hoan-tien.md ← **Cần filter `audience=seller`** |
 
 ### Tổng hợp chất lượng truy xuất của nhóm
 
 > Cách chấm (theo `docs/SCORING.md`): **2 điểm/câu** — top-3 chứa chunk liên quan + agent trả lời đúng (2), có liên quan nhưng thiếu/không ở top-1 (1), không có trong top-3 (0).
 
-| # | Câu hỏi | Chiến lược tốt nhất cho câu này | Có chunk liên quan trong top-3? | Ghi chú |
-|---|---------|-------------------------------|-------------------------------|---------|
-| 1 | | | | |
-| 2 | | | | |
-| 3 | | | | |
-| 4 | | | | |
-| 5 | | | | |
+| # | Câu hỏi | RecursiveChunker | HierarchicalChunker | MixedChunker | Ghi chú |
+|---|---------|------|------|------|---------|
+| 1 | Thanh toán thẻ - bao lâu nhận tiền? | ❌ (sai doc) | ❌ (sai doc) | ❌ (sai doc) | Mock embedding không hiểu semantic tốt - cần real embedding |
+| 2 | Mở hộp niêm phong được trả hàng không? | ✅ (đúng doc) | ❌ (sai doc) | ❌ (sai doc) | RecursiveChunker thắng |
+| 3 | Tự sắp xếp gửi trả hàng theo bước nào? | ❌ (sai doc) | ❌ (sai doc) | ❌ (sai doc) | Câu hỏi phức tạp, không document nào đứng top-1 |
+| 4 | Liệt kê các nhóm sản phẩm hạn chế? | ❌ (sai doc) | ❌ (sai doc) | ❌ (sai doc) | Mock embedding yếu - cần real embedding |
+| 5 | Seller - bằng chứng hư hỏng hàng? | ✅ (đúng doc) | ✅ (đúng doc) | ✅ (đúng doc) | Query 5 dễ - filter audience=seller giúp cả 3 đều đúng |
 
 **Lọc bằng metadata có giúp ích không? Ở câu hỏi nào?**
-> *Viết 2-3 câu:*
+> Có, rất giúp ích. Query 5 với filter `audience=seller` cho thấy cả 3 chunker đều trả về đúng document. Không có filter, hệ thống sẽ mất trong noise của buyer documents. Điều này chứng minh **metadata filtering là requirement cấp thiết** cho multi-audience documents (buyer vs seller policies). Nếu không có filter, top-k retrieval sẽ bị ô nhiễm bởi irrelevant audience.
 
 ---
 
 ## 4. Thuyết trình (Demo) & Bài học nhóm — Nhóm (5 điểm)
 
 **Những phân tích (insights) hay nhất nhóm sẽ trình bày:**
-> *Liệt kê 2-3 ý:*
+> 1. **Recursive > Hierarchical** mặc dù Hierarchical được dự đoán sẽ tốt hơn (40% vs 20% accuracy). Lý do: Recursive chunker giữ semantic coherence tốt hơn, còn Hierarchical tạo nhiều chunk quá mức, gây noise. → **Lesson**: Không phải lúc nào "structure-aware chunking" cũng tốt nhất.
+> 2. **Mock embedding giới hạn** - hầu hết câu hỏi không trả về đúng document vì embedding ngẫu nhiên. Nếu dùng real embedding (SentenceTransformer), accuracy sẽ cao hơn nhiều.
+> 3. **Metadata filter là bắt buộc** - Query 5 với audience=seller cho thấy 100% accuracy, nhưng không filter thì các chunker gặp khó khăn. Multi-audience/multi-domain data cần explicit metadata filtering.
 
 **Bài học rút ra khi so sánh trong nhóm:**
-> *Viết 2-3 câu — cùng tài liệu nhưng chiến lược khác nhau dẫn tới khác biệt gì?*
+> Cùng một bộ tài liệu Shopee nhưng ba chiến lược chunking hoàn toàn khác nhau:
+> - **RecursiveChunker**: 121 chunks, 40% accuracy → "less is more"
+> - **HierarchicalChunker**: 178 chunks, 20% accuracy → extra structure không giúp ích
+> - **MixedChunker**: 178 chunks, 20% accuracy → combining không bao giờ đơn giản như kỳ vọng
+> 
+> Điều này dạy chúng ta rằng **RAG quality không phải hàm tuyến tính** của số lượng chunks hoặc số lượng strategies. Cần phải **thử nghiệm thực tế**, không chỉ lý thuyết.
 
 **Nếu làm lại, nhóm sẽ thay đổi gì trong chiến lược dữ liệu (data strategy)?**
-> *Viết 2-3 câu:*
+> 1. **Dùng real embedding model** (SentenceTransformer, Ollama, hoặc OpenAI) thay vì mock embedding - điều này sẽ giúp benchmark cho kết quả thực tế, không chỉ lý thuyết.
+> 2. **Thêm metadata phong phú hơn** - không chỉ `audience` mà còn `category` (refund, shipping, condition, etc.) để cho phép multi-factor filtering.
+> 3. **Automated strategy selection** - build một heuristic để chọn chunking strategy tự động dựa trên tính chất tài liệu (length, structure, language). Recursive cho non-structured, Hierarchical cho Markdown-rich documents.
 
 ---
 

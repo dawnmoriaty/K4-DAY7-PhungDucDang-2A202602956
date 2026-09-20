@@ -1,0 +1,6 @@
+query_id,query,chunker,num_chunks_total,top_1_doc_id,top_1_score,top_1_in_gold,top_3_relevant,answer_marker_found
+1,Nếu thanh toán bằng thẻ tín dụng/ghi nợ thì tôi sẽ nhận tiền hoàn trong bao lâu?,mixed,178,shopee-tra-hang-doi-y,0.312,False,0,False
+2,Tôi đã mở hộp niêm phong để kiểm tra sản phẩm thì có được trả hàng với lý do đổi ý không?,mixed,178,shopee-dong-goi-hang-hoan-tra,0.294,False,0,False
+3,"Nếu chọn hình thức Tự sắp xếp, tôi phải gửi trả hàng theo các bước nào?",mixed,178,shopee-thoi-gian-va-kiem-tra-tien-hoan,0.329,False,0,False
+4,Hãy liệt kê các nhóm sản phẩm hạn chế trả hàng và cho một vài ví dụ trong mỗi nhóm.,mixed,178,shopee-thoi-gian-va-kiem-tra-tien-hoan,0.344,False,0,False
+5,"Khi đơn hàng hoàn trả bị hư hỏng, thiếu hàng hoặc không đúng hàng, cần chuẩn bị bằng chứng gì?",mixed,178,shopee-seller-phan-hoi-tra-hang-hoan-tien,0.276,True,3,True

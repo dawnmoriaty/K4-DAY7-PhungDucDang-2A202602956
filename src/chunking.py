@@ -406,3 +406,81 @@ class HierarchicalChunker:
                         })
         
         return chunks_with_meta
+
+
+class MixedHierarchicalRecursiveChunker:
+    """
+    Hybrid chunker combining Hierarchical + Recursive strategies.
+    
+    Strategy:
+        1. First split by Markdown headings (hierarchical structure)
+        2. Then recursively split oversized sections (coherence preservation)
+        3. Preserve heading context at each level
+    
+    Why Mix?
+        - Hierarchical: captures document structure (sections, subsections)
+        - Recursive: maintains semantic coherence within sections
+        - Mixed: best of both - structure + coherence
+    
+    Expected to work well for Shopee e-commerce policies (structured + detailed).
+    """
+    
+    def __init__(self, chunk_size: int = 500, preserve_headings: bool = True) -> None:
+        self.chunk_size = chunk_size
+        self.preserve_headings = preserve_headings
+        self._hierarchical = HierarchicalChunker(chunk_size=chunk_size, preserve_headings=preserve_headings)
+        self._recursive = RecursiveChunker(chunk_size=chunk_size)
+    
+    def chunk(self, text: str) -> list[str]:
+        """
+        Split using mixed hierarchical + recursive strategy.
+        
+        Algorithm:
+            1. Use HierarchicalChunker to split by sections
+            2. For each chunk from step 1:
+               - If small enough → keep as-is
+               - If too large → recursive split (preserves coherence)
+        
+        Returns list of chunks preserving both structure and coherence.
+        """
+        if not text:
+            return []
+        
+        # Step 1: Get hierarchical chunks (respects structure)
+        hier_chunks = self._hierarchical.chunk(text)
+        
+        # Step 2: Post-process with recursive splitting if needed
+        final_chunks = []
+        for hier_chunk in hier_chunks:
+            if len(hier_chunk) <= self.chunk_size:
+                # Small enough → keep as-is
+                final_chunks.append(hier_chunk)
+            else:
+                # Too large → recursive split to improve coherence
+                # But try to preserve heading if present
+                lines = hier_chunk.split('\n')
+                heading = ""
+                content_lines = []
+                
+                for line in lines:
+                    if re.match(r'^#{2,4}\s+', line):
+                        heading = line
+                    else:
+                        content_lines.append(line)
+                
+                content_text = '\n'.join(content_lines).strip()
+                if content_text:
+                    # Recursively split content
+                    recursive_chunks = self._recursive.chunk(content_text)
+                    
+                    # Reattach heading to first chunk only
+                    for i, chunk in enumerate(recursive_chunks):
+                        if i == 0 and heading:
+                            final_chunks.append(f"{heading}\n{chunk}")
+                        else:
+                            final_chunks.append(chunk)
+                else:
+                    # Only heading, no content → keep as-is
+                    final_chunks.append(hier_chunk)
+        
+        return final_chunks

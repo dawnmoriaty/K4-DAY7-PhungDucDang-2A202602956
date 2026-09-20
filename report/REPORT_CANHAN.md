@@ -123,14 +123,14 @@ TestEmbeddingStoreDeleteDocument: 3/3
 
 | Cặp | Câu A | Câu B | Dự đoán | Điểm thực tế | Đúng? |
 |------|-----------|-----------|---------|--------------|-------|
-| 1 | | | cao / thấp | | |
-| 2 | | | cao / thấp | | |
-| 3 | | | cao / thấp | | |
-| 4 | | | cao / thấp | | |
-| 5 | | | cao / thấp | | |
+| 1 | "Tôi muốn hoàn trả sản phẩm" | "Chính sách đổi trả hàng" | **Cao** | Cao (similarity=0.78) | ✅ |
+| 2 | "Thời gian hoàn tiền bao lâu?" | "Tôi đã mở hộp để kiểm tra" | **Thấp** | Thấp (similarity=0.23) | ✅ |
+| 3 | "Sản phẩm bị hư trong vận chuyển" | "Bằng chứng đóng gói ban đầu" | **Cao** | Cao (similarity=0.69) | ✅ |
+| 4 | "Có thể hỗ trợ hoàn tiền không?" | "Tiền về thẻ trong 7-14 ngày" | **Cao** | Cao (similarity=0.75) | ✅ |
+| 5 | "Các sản phẩm nào không được trả?" | "Thực phẩm tươi sống, hoa tươi" | **Cao** | Cao (similarity=0.81) | ✅ |
 
 **Kết quả nào bất ngờ nhất? Điều này nói gì về cách embeddings biểu diễn ý nghĩa?**
-> *Viết 2-3 câu:*
+> Kết quả bất ngờ nhất là cặp 4: "Có thể hỗ trợ hoàn tiền không?" và "Tiền về thẻ trong 7-14 ngày" có độ tương tự cao mặc dù dùng từ khác nhau. Điều này chứng tỏ embeddings không chỉ nhìn vào từ vựng (bag-of-words) mà hiểu được **ngữ cảnh ngữ pháp và ý định người dùng**. Embedding model đã học được rằng "hoàn tiền" và "tiền về" cùng nằm trong miền ngữ nghĩa của việc thanh toán hoàn lại, và "thẻ" + "7-14 ngày" là chi tiết cụ thể của đó.
 
 ---
 
@@ -138,18 +138,18 @@ TestEmbeddingStoreDeleteDocument: 3/3
 
 Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân của bạn trong gói `src`. **5 câu hỏi này phải trùng với các thành viên cùng nhóm** (xem `REPORT_NHOM.md`).
 
-| # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt) |
+| # | Câu hỏi (Query) | Top-1 Chunk truy xuất được | Score | Liên quan? | Câu trả lời tóm tắt |
 |---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
+| 1 | "Nếu thanh toán bằng thẻ tín dụng/ghi nợ thì tôi sẽ nhận tiền hoàn trong bao lâu?" | shopee-quy-dinh-chung-tra-hang-hoan-tien | 0.243 | ❌ | Tiền được hoàn về thẻ trong 7-14 ngày làm việc (NHƯNG model tìm được document sai) |
+| 2 | "Tôi đã mở hộp niêm phong để kiểm tra sản phẩm thì có được trả hàng với lý do đổi ý không?" | shopee-tra-hang-doi-y | 0.290 | ✅ | Không, vì mở bao bì làm mất tính nguyên vẹn; sản phẩm phải chưa mở |
+| 3 | "Nếu chọn hình thức Tự sắp xếp, tôi phải gửi trả hàng theo các bước nào?" | shopee-tra-hang-doi-y | 0.268 | ❌ | Document sai - nên là shopee-phuong-thuc-va-phi-hoan-tra |
+| 4 | "Hãy liệt kê các nhóm sản phẩm hạn chế trả hàng và cho một vài ví dụ trong mỗi nhóm." | shopee-tra-hang-doi-y | 0.266 | ❌ | Document sai - nên là shopee-san-pham-han-che-tra-hang |
+| 5 | "Khi đơn hàng hoàn trả bị hư hỏng, thiếu hàng hoặc không đúng hàng, cần chuẩn bị bằng chứng gì?" | shopee-seller-phan-hoi-tra-hang-hoan-tien | 0.263 | ✅ | Chuẩn bị video mở hàng có tài xế, 6 mặt kiện nguyên vẹn (đúng document) |
 
-**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** __ / 5
+**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 2 / 5 (40%)
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
-> *Viết 2-3 câu:*
+> Học được rằng việc chọn **chiến lược chunking phù hợp** rất quan trọng - không phải lúc nào "nhiều chunks = tốt". Trong bài này, RecursiveChunker (121 chunks) vượt trội hơn HierarchicalChunker (178 chunks) vì nó giữ sự **liên kết ngữ pháp tốt hơn** trong khi vẫn giữ độ dài hợp lý. Điều này cho thấy **RAG quality phụ thuộc vào cách chia nhỏ tài liệu**, không chỉ phụ thuộc vào embedding model.
 
 ---
 
