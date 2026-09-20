@@ -175,19 +175,21 @@ class ChunkingStrategyComparator:
 
     def compare(self, text: str, chunk_size: int = 200) -> dict:
         # TODO: call each chunker, compute stats, return comparison dict
-        """Return dict with keys: fixed_size, by_sentences, recursive"""
+        """Return dict with keys: fixed_size, by_sentences, recursive, hierarchical"""
     
         if not text:
             return {
                 'fixed_size': {'count': 0, 'avg_length': 0.0, 'chunks': []},
                 'by_sentences': {'count': 0, 'avg_length': 0.0, 'chunks': []},
-                'recursive': {'count': 0, 'avg_length': 0.0, 'chunks': []}
+                'recursive': {'count': 0, 'avg_length': 0.0, 'chunks': []},
+                'hierarchical': {'count': 0, 'avg_length': 0.0, 'chunks': []}
             }
         
-        # Gọi 3 chunker
+        # Gọi 4 chunker
         fixed_chunks = FixedSizeChunker(chunk_size=chunk_size).chunk(text)
         sentence_chunks = SentenceChunker(max_sentences_per_chunk=3).chunk(text)
         recursive_chunks = RecursiveChunker(chunk_size=chunk_size).chunk(text)
+        hierarchical_chunks = HierarchicalChunker(chunk_size=chunk_size).chunk(text)
         
         # Helper: tính stats
         def stats(chunks):
@@ -205,7 +207,8 @@ class ChunkingStrategyComparator:
         return {
             'fixed_size': stats(fixed_chunks),
             'by_sentences': stats(sentence_chunks),
-            'recursive': stats(recursive_chunks)
+            'recursive': stats(recursive_chunks),
+            'hierarchical': stats(hierarchical_chunks)
         }
 
 
