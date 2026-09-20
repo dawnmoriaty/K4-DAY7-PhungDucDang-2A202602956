@@ -14,31 +14,40 @@
 
 ### Chủ đề (Domain) & Lý Do Chọn
 
-**Chủ đề:** [ví dụ: Customer support FAQ, Luật Việt Nam, công thức nấu ăn, ...]
+**Chủ đề:** Chính sách Trả hàng & Hoàn tiền của Shopee (E-commerce Customer Support)
 
 **Tại sao nhóm chọn chủ đề này?**
-> *Viết 2-3 câu:*
+> Shopee là sàn thương mại điện tử lớn nhất Việt Nam với chính sách trả hàng/hoàn tiền phức tạp, đa đối tượng (buyer vs seller), và có nhiều điều kiện, quy trình khác nhau. Đây là use case thực tế điển hình cho RAG: tài liệu có cấu trúc rõ ràng (## Mục, danh sách, bảng), nội dung dài (5-20KB/file), cần truy xuất chính xác (không được sai số liệu), và cần phân biệt đối tượng (audience filter). Ngoài ra, corpus này hoàn toàn công khai trên help.shopee.vn nên đảm bảo data governance.
 
 ### Danh sách tài liệu (Data Inventory)
 
 | # | Tên tài liệu | Nguồn (Source URL) | Ngày lấy / Phiên bản | Số ký tự | Metadata đã gán |
 |---|--------------|------------|--------------------|----------|-----------------|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
+| 1 | Cách đóng gói đơn hàng hoàn trả | https://help.shopee.vn/portal/4/article/79508 | 2026-09-20 / not-stated | 4,400 | doc_id, title, audience=buyer, category=returns-policy |
+| 2 | Kiểm tra tiền hoàn vào SPayLater | https://help.shopee.vn/portal/4/article/164831 | 2026-09-20 / not-stated | 7,500 | doc_id, title, audience=buyer, category=payment |
+| 3 | Phương thức gửi hàng và phí hoàn trả | https://help.shopee.vn/portal/4/article/189477 | 2026-09-20 / not-stated | 7,700 | doc_id, title, audience=buyer, category=returns-policy |
+| 4 | Quy định chung về Trả hàng/Hoàn tiền | https://help.shopee.vn/portal/4/article/188931 | 2026-09-20 / not-stated | 9,400 | doc_id, title, audience=buyer, category=policy |
+| 5 | Sản phẩm hạn chế trả hàng | https://help.shopee.vn/portal/4/article/79465 | 2026-09-20 / not-stated | 1,900 | doc_id, title, audience=buyer, category=restrictions |
+| 6 | Theo dõi vận chuyển hàng hoàn trả | https://help.shopee.vn/portal/4/article/189476 | 2026-09-20 / not-stated | 1,300 | doc_id, title, audience=buyer, category=logistics |
+| 7 | Thời gian nhận tiền hoàn | https://help.shopee.vn/portal/4/article/189473 | 2026-09-20 / not-stated | 5,300 | doc_id, title, audience=buyer, category=payment |
+| 8 | Trả hàng do "Đổi ý" | https://help.shopee.vn/portal/4/article/204305 | 2026-09-20 / not-stated | 9,800 | doc_id, title, audience=buyer, category=returns-policy |
+| 9 | FAQ Trả hàng/Hoàn tiền cho Người bán | https://banhang.shopee.vn/edu/article/10626 | 2026-09-20 / not-stated | 19,000 | doc_id, title, **audience=seller**, category=policy |
 
 **Danh sách kiểm tra quản trị dữ liệu (Data governance checklist):**
-- [ ] Tập tài liệu (Corpus) chỉ chứa nguồn công khai/được phép dùng và không chứa dữ liệu cá nhân, thông tin đăng nhập hoặc tài liệu nội bộ.
-- [ ] Mỗi tài liệu có `source_url`, `retrieved_at`, `document_version` (hoặc ngày hiệu lực) trong metadata.
+- [x] Tập tài liệu (Corpus) chỉ chứa nguồn công khai/được phép dùng và không chứa dữ liệu cá nhân, thông tin đăng nhập hoặc tài liệu nội bộ.
+- [x] Mỗi tài liệu có `source_url`, `retrieved_at`, `document_version` (hoặc ngày hiệu lực) trong metadata.
 
 ### Cấu trúc Metadata (Metadata Schema)
 
 | Trường metadata | Kiểu | Ví dụ giá trị | Tại sao hữu ích cho truy xuất (retrieval)? |
 |----------------|------|---------------|-------------------------------|
-| | | | |
-| | | | |
+| `doc_id` | string | `shopee-tra-hang-doi-y` | Định danh file gốc, dùng cho delete_document() và đối chiếu với gold answer |
+| `audience` | string | `buyer` / `seller` | **Quan trọng nhất** - Lọc câu hỏi theo đối tượng (buyer vs seller), tránh trả lời sai policy |
+| `category` | string | `returns-policy` / `payment` / `logistics` | Lọc theo chủ đề con, giúp narrow down search scope |
+| `title` | string | "Những điều cần biết về Trả hàng..." | Human-readable reference, hiển thị trong citations |
+| `source_url` | string | `https://help.shopee.vn/...` | Traceability - user có thể verify nguồn gốc thông tin |
+| `retrieved_at` | date | `2026-09-20` | Đánh dấu thời điểm crawl, quan trọng cho freshness check |
+| `language` | string | `vi` | Multilingual support - có thể filter theo ngôn ngữ nếu mở rộng |
 
 ---
 
