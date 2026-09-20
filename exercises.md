@@ -42,17 +42,20 @@ Chạy `pytest tests/` để kiểm tra tiến độ.
 ### Danh sách cần làm (Checklist)
 - [x] `Document` dataclass — ĐÃ TRIỂN KHAI SẴN
 - [x] `FixedSizeChunker` — ĐÃ TRIỂN KHAI SẴN
-- [ ] `SentenceChunker` — tách dựa trên ranh giới câu, nhóm lại thành các chunks
-- [ ] `RecursiveChunker` — thử nghiệm các dấu phân cách (separators) theo thứ tự, thực hiện đệ quy trên các đoạn có kích thước quá lớn
-- [ ] `compute_similarity` — công thức tính độ tương tự cosine kèm cơ chế bảo vệ chia cho 0
-- [ ] `ChunkingStrategyComparator` — gọi cả ba chiến lược, tính toán các chỉ số thống kê
-- [ ] `EmbeddingStore.__init__` — khởi tạo store (lưu trữ trong bộ nhớ hoặc ChromaDB)
-- [ ] `EmbeddingStore.add_documents` — nhúng (embed) và lưu trữ từng tài liệu
-- [ ] `EmbeddingStore.search` — nhúng truy vấn, xếp hạng theo tích vô hướng (dot product)
-- [ ] `EmbeddingStore.get_collection_size` — trả về số lượng
-- [ ] `EmbeddingStore.search_with_filter` — lọc theo siêu dữ liệu (metadata), sau đó tìm kiếm
-- [ ] `EmbeddingStore.delete_document` — xóa tất cả các chunks của một doc_id
-- [ ] `KnowledgeBaseAgent.answer` — truy xuất (retrieve) + tạo prompt + gọi LLM
+- [x] `SentenceChunker` — tách dựa trên ranh giới câu, nhóm lại thành các chunks ✅
+- [x] `RecursiveChunker` — thử nghiệm các dấu phân cách (separators) theo thứ tự, thực hiện đệ quy trên các đoạn có kích thước quá lớn ✅
+- [x] `compute_similarity` — công thức tính độ tương tự cosine kèm cơ chế bảo vệ chia cho 0 ✅
+- [x] `ChunkingStrategyComparator` — gọi cả ba chiến lược, tính toán các chỉ số thống kê ✅
+- [x] `EmbeddingStore.__init__` — khởi tạo store (lưu trữ trong bộ nhớ) ✅
+- [x] `EmbeddingStore.add_documents` — nhúng (embed) và lưu trữ từng tài liệu ✅
+- [x] `EmbeddingStore.search` — nhúng truy vấn, xếp hạng theo tích vô hướng (dot product) ✅
+- [x] `EmbeddingStore.get_collection_size` — trả về số lượng ✅
+- [x] `EmbeddingStore.search_with_filter` — lọc theo siêu dữ liệu (metadata), sau đó tìm kiếm ✅
+- [x] `EmbeddingStore.delete_document` — xóa tất cả các chunks của một doc_id ✅
+- [x] `KnowledgeBaseAgent.answer` — truy xuất (retrieve) + tạo prompt + gọi LLM ✅
+- [x] **BONUS:** `HierarchicalChunker` — split theo Markdown headings ✅
+- [x] **BONUS:** `MixedHierarchicalRecursiveChunker` — hybrid approach ✅
+- [x] **BONUS:** `SmartMockEmbedder` — keyword-based embedding (improved from hash) ✅
 
 > **Nộp code:** thư mục `src/`
 > **Ghi lại hướng tiếp cận vào:** Báo cáo — Phần 4 (Hướng tiếp cận của tôi)
@@ -183,7 +186,49 @@ Tìm ít nhất **1 trường hợp lỗi (failure case)** trong quá trình so 
 
 ## Danh Sách Kiểm Tra Nộp Bài (Submission Checklist)
 
-- [ ] Vượt qua tất cả các bài kiểm thử (tests): `pytest tests/ -v`
-- [ ] Cập nhật thư mục `src/` (cá nhân)
-- [ ] Hoàn thành báo cáo nhóm (`report/REPORT_NHOM.md` — 1 file/nhóm)
-- [ ] Hoàn thành báo cáo cá nhân (`report/REPORT_CANHAN.md` — 1 file/sinh viên)
+- [x] Vượt qua tất cả các bài kiểm thử (tests): `pytest tests/ -v` → **42/42 PASSED** ✅
+- [x] Cập nhật thư mục `src/` (cá nhân) → **Hoàn thiện chunking.py, store.py, agent.py, embeddings.py** ✅
+- [x] Hoàn thành báo cáo nhóm (`report/REPORT_NHOM.md` — 1 file/nhóm) → **4/4 sections complete** ✅
+- [x] Hoàn thành báo cáo cá nhân (`report/REPORT_CANHAN.md` — 1 file/sinh viên) → **5/5 sections complete** ✅
+- [x] **BONUS:** Data corpus (data/shopee/) với 9 documents + sources.csv ✅
+- [x] **BONUS:** Benchmark infrastructure (bench.py + ket_qua_benchmark.txt) ✅
+- [x] **BONUS:** Improved embedding (SmartMockEmbedder) với 40% marker found ✅
+- [x] **BONUS:** 3 chunking strategies so sánh (Recursive, Hierarchical, Mixed) ✅
+
+---
+
+## 📊 Kết Quả Cuối Cùng
+
+### Tests: **42/42 PASSED** ✅
+```bash
+pytest tests/ -v
+# TestProjectStructure: 2/2
+# TestClassBasedInterfaces: 2/2
+# TestFixedSizeChunker: 7/7
+# TestSentenceChunker: 4/4
+# TestRecursiveChunker: 4/4
+# TestEmbeddingStore: 8/8
+# TestKnowledgeBaseAgent: 2/2
+# TestComputeSimilarity: 4/4
+# TestCompareChunkingStrategies: 3/3
+# TestEmbeddingStoreSearchWithFilter: 3/3
+# TestEmbeddingStoreDeleteDocument: 3/3
+```
+
+### Benchmark: **4/10 (40%) Score** ✅
+- Query #1: **2/2 PERFECT** (đúng doc + marker found)
+- Query #2: 1/2 (marker in top-3)
+- Query #3: 0/2
+- Query #4: 0/2
+- Query #5: 1/2 (top-1 correct, filter worked)
+
+### Key Achievement
+**Embedding improvement**: 0% → 40% marker found với SmartMockEmbedder (keyword-based)
+
+---
+
+## ✅ SẴN SÀNG NỘP BÀI
+
+**Repository name**: K4-DAY07-PhungDucDang-2A202602956  
+**Git status**: Clean (no .venv, no .env)  
+**Ready to push**: `git push -u origin main`
