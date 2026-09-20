@@ -54,23 +54,41 @@ Giải thích cách tiếp cận của bạn khi lập trình (implement) các p
 ### Các hàm chia nhỏ (Chunking Functions)
 
 **`SentenceChunker.chunk`** — hướng tiếp cận:
-> *Viết 2-3 câu: dùng biểu thức chính quy (regex) gì để phát hiện câu? Xử lý trường hợp ngoại lệ (edge case) nào?*
+
+Tôi dùng regex lookahead `(?<=[.!?])\s+` để tách câu mà giữ lại dấu câu (không nuốt mất). 
+Sau đó gom các câu liền kề theo `max_sentences_per_chunk`. Edge case xử lý: text rỗng trả `[]`, 
+câu không có dấu được giữ nguyên.
 
 **`RecursiveChunker.chunk` / `_split`** — hướng tiếp cận:
-> *Viết 2-3 câu: thuật toán hoạt động thế nào? Base case (trường hợp cơ sở) là gì?*
+
+Thuật toán hai chiều: (1) Đệ quy xuống sâu - thử separators theo thứ tự (ưu tiên ranh giới "to" trước), 
+nếu mảnh vẫn quá dài thì hạ xuống separator nhỏ hơn. (2) Gom lên - nối các mảnh nhỏ liền kề cho tới sát 
+`chunk_size` để tránh chunks vụn. Base case: text ≤ chunk_size (return), hết separators (cắt cứng), 
+empty separator (cắt cứng).
 
 ### Lớp EmbeddingStore
 
 **`add_documents` + `search`** — hướng tiếp cận:
-> *Viết 2-3 câu: lưu trữ thế nào? Tính độ tương tự ra sao?*
+
+Tôi tách logic thành 2 helper methods: (1) `_make_record` - chuẩn hóa Document → internal record 
+(embed + copy metadata + bảo đảm doc_id). (2) `_search_records` - tính similarity toàn bộ records 
+rồi sort descending. Điều này tránh lặp logic vì cả `search()` và `search_with_filter()` đều cần 
+tính similarity giống nhau.
 
 **`search_with_filter` + `delete_document`** — hướng tiếp cận:
-> *Viết 2-3 câu: lọc (filter) trước hay sau? Xóa bằng cách nào?*
+
+Filter **trước** khi search (không sau) vì nếu filter sau sẽ mất kết quả - k slots có thể bị 
+chiếm bởi records không hợp lệ. `delete_document` dùng list comprehension để lọc ra những record 
+có `metadata['doc_id']` khác, trả True/False tuỳ xóa được gì không.
 
 ### Tác tử KnowledgeBaseAgent
 
 **`answer`** — hướng tiếp cận:
-> *Viết 2-3 câu: cấu trúc prompt? Cách đưa ngữ cảnh (inject context) vào thế nào?*
+
+Theo mô hình RAG chuẩn: (1) Retrieve - gọi store.search() lấy top-k chunks. (2) Augment - xây prompt 
+với ngữ cảnh **có đánh số** [1] [2] [3]. (3) Generate - gọi llm_fn(). Đánh số chunks giúp model 
+tham chiếu được (ví dụ "như [1] nói...") → câu trả lời **truy vết được** → đạt tiêu chí Source Traceability.
+
 
 ---
 
