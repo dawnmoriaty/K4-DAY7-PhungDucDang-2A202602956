@@ -99,10 +99,23 @@ Vượt qua bộ kiểm thử là điều kiện tính điểm phần này.
 ### Kết Quả Kiểm Thử (Test Results)
 
 ```
-# Dán kết quả (output) của: pytest tests/ -v
+pytest tests/ -v
+→ 42/42 PASSED ✅
+
+TestProjectStructure: 2/2
+TestClassBasedInterfaces: 2/2
+TestFixedSizeChunker: 7/7
+TestSentenceChunker: 4/4
+TestRecursiveChunker: 4/4
+TestEmbeddingStore: 8/8
+TestKnowledgeBaseAgent: 2/2
+TestComputeSimilarity: 4/4
+TestCompareChunkingStrategies: 3/3
+TestEmbeddingStoreSearchWithFilter: 3/3
+TestEmbeddingStoreDeleteDocument: 3/3
 ```
 
-**Số lượng bài test vượt qua (pass):** __ / 42
+**Số lượng bài test vượt qua (pass):** 42 / 42 ✅
 
 ---
 
